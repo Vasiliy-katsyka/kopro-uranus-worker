@@ -1,5 +1,5 @@
-FROM ./base.gguf
-ADAPTER ./adapter.gguf
+FROM /tmp/m/base.gguf
+ADAPTER /tmp/m/adapter.gguf
 PARAMETER temperature 0.7
 PARAMETER top_p 0.8
 PARAMETER top_k 20
