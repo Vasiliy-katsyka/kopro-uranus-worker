@@ -6,6 +6,6 @@ RunPod serverless worker for **Kopro 5.0 Uranus**: llama.cpp server with the mod
 - `variant: "base"`: the same model with the adapter switched off for that request (A/B evaluation, no extra VRAM)
 
 Input (same contract as worker-ollama): `{messages, think, options?, tools?, variant?}` → Ollama `/api/chat`-shaped response.
-`{warmup: true}` returns once the server is up.
+`{warmup: true}` returns once the server is up. `{stream_chunks: true}` yields text in ~0.35 s batches for RunPod `/stream`.
 
 Build: Actions → build-uranus-image → Run workflow (optional `adapter_url`).
