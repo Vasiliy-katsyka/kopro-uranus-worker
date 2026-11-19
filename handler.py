@@ -10,7 +10,7 @@ import json, os, time, requests, runpod
 
 URL = "http://127.0.0.1:8080"
 HAS_LORA = os.path.exists("/models/adapter.gguf")
-SYSTEM = "You are Kopro 5.0 Uranus, an AI assistant made by Vasiliy Katsyka at Kopro AI. Answer in the user's language."
+SYSTEM = os.environ.get("SYSTEM_PROMPT", "You are Kopro 5.0 Uranus, an AI assistant made by Vasiliy Katsyka at Kopro AI. Answer in the user's language.")
 FLUSH_S = 0.35
 
 
@@ -52,7 +52,8 @@ def handler(job):
     if not inp.get("stream_chunks") or inp.get("tools"):
         body["stream"] = False
         r = requests.post(URL + "/v1/chat/completions", json=body, timeout=900)
-        r.raise_for_status()
+        if r.status_code >= 400:  # keep llama-server's reason (e.g. tool-call parse error) in the job error
+            raise RuntimeError(f"{r.status_code} Server Error: {r.text[:500]}")
         d = r.json()
         m = d["choices"][0]["message"]
         calls = [{"function": {"name": c["function"]["name"], "arguments": json.loads(c["function"].get("arguments") or "{}")}}
